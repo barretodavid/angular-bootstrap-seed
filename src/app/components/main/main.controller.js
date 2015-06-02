@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('ul')
+angular.module('app')
   .controller('MainCtrl', function(){
     var vm = this;
     console.log('hello');
