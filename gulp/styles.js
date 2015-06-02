@@ -13,35 +13,39 @@ module.exports = function(options) {
       style: 'expanded'
     };
 
+    function transformFn(filePath) {
+      filePath = filePath.replace(options.src + '/app/', '');
+      return '@import \'' + filePath + '\';';
+    }
+
     var injectFiles = gulp.src([
       options.src + '/app/**/*.scss',
+      '!' + options.src + '/app/global/**/*.scss',
       '!' + options.src + '/app/index.scss',
-      '!' + options.src + '/app/vendor.scss'
     ], { read: false });
 
     var injectOptions = {
-      transform: function(filePath) {
-        filePath = filePath.replace(options.src + '/app/', '');
-        return '@import \'' + filePath + '\';';
-      },
-      starttag: '// injector',
+      transform: transformFn,
+      starttag: '// injector:app',
       endtag: '// endinjector',
       addRootSlash: false
     };
 
-    var indexFilter = $.filter('index.scss');
-    var vendorFilter = $.filter('vendor.scss');
+    var injectFilesGlobal = gulp.src([
+      options.src + '/app/global/**/*.scss',
+    ], { read: false });
 
-    return gulp.src([
-      options.src + '/app/index.scss',
-      options.src + '/app/vendor.scss'
-    ])
-      .pipe(indexFilter)
+    var injectOptionsGlobal = {
+      transform: transformFn,
+      starttag: '// injector:global',
+      endtag: '// endinjector',
+      addRootSlash: false
+    };
+
+    return gulp.src(options.src + '/app/index.scss')
+      .pipe($.inject(injectFilesGlobal, injectOptionsGlobal))
       .pipe($.inject(injectFiles, injectOptions))
-      .pipe(indexFilter.restore())
-      .pipe(vendorFilter)
       .pipe(wiredep(options.wiredep))
-      .pipe(vendorFilter.restore())
       .pipe($.sourcemaps.init())
       .pipe($.sass(sassOptions)).on('error', options.errorHandler('Sass'))
       .pipe($.autoprefixer()).on('error', options.errorHandler('Autoprefixer'))

@@ -4,7 +4,7 @@ angular.module('ul', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'restan
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {
-        templateUrl: 'app/main/main.html',
+        templateUrl: 'app/components/main/main.template.html',
         controller: 'MainCtrl'
       })
       .otherwise({
