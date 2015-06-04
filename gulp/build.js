@@ -18,7 +18,7 @@ module.exports = function(options) {
         quotes: true
       }))
       .pipe($.angularTemplatecache('templateCacheHtml.js', {
-        module: 'ul',
+        module: 'app',
         root: 'app'
       }))
       .pipe(gulp.dest(options.tmp + '/partials/'));
